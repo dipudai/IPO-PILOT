@@ -1,7 +1,5 @@
-FROM golang:1.21-alpine AS builder
-
-# Install build dependencies for CGO (required for SQLite)
-RUN apk add --no-cache gcc musl-dev sqlite-dev
+# Use Debian-based Go image (full glibc support for SQLite)
+FROM golang:1.21 AS builder
 
 WORKDIR /app/web-app
 
@@ -15,10 +13,13 @@ COPY web-app/ .
 # Build the application with CGO enabled (required for SQLite)
 RUN CGO_ENABLED=1 GOOS=linux go build -o ipo-pilot .
 
-# Use alpine for smaller image
-FROM alpine:latest
+# Use Debian slim for smaller final image
+FROM debian:bookworm-slim
 
-RUN apk --no-cache add ca-certificates sqlite-libs libgcc libstdc++
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/
 
