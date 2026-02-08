@@ -68,29 +68,13 @@ type PricingTier struct {
 	FeaturesNepali  []string
 }
 
-// Get pricing based on launch year
-func getPricingForYear(year int) (basic, premium, enterprise int) {
-	switch year {
-	case 2025:
-		// 2025: Pre-launch prices (original)
-		return 1999, 3999, 7999
-	case 2026:
-		// 2026: Launch Year - 50% Discount! (Winter Promo)
-		return 999, 1999, 3999
-	default:
-		// 2027 and beyond - Fixed pricing (no more increases)
-		return 999, 1999, 3999
-	}
+// Get pricing based on year - PREMIUM ONLY
+func getPricingForYear(year int) (premiumPrice int) {
+	// 2026 LAUNCH: PREMIUM-ONLY - 50% Discount!
+	return 1999  // Single tier: ₹1,999 (was ₹3,999)
 }
 
 // Get pricing message for current year
 func getPricingMessage(year int) string {
-	switch year {
-	case 2025:
-		return "Pre-launch pricing overview"
-	case 2026:
-		return "🎉 2026 Launch Year Special! Enjoy 50% Discount on All Plans!"
-	default:
-		return "💎 Fixed Pricing Tier (Stable & Sustainable)"
-	}
+	return "🎉 2026 LAUNCH YEAR SPECIAL! One Premium Plan - ₹1,999 for 3 months!"
 }

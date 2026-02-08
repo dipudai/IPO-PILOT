@@ -181,11 +181,11 @@ func analyticsHandler(c *gin.Context) {
 		Order("date").
 		Scan(&analyticsData.DailyApplications)
 
-	// Subscription breakdown
+	// Subscription breakdown - PREMIUM ONLY
 	analyticsData.SubscriptionBreakdown = make(map[string]int64)
-	db.Model(&Subscription{}).Where("plan_type = ? AND status = ?", "basic", "active").Count(&analyticsData.SubscriptionBreakdown["basic"])
-	db.Model(&Subscription{}).Where("plan_type = ? AND status = ?", "premium", "active").Count(&analyticsData.SubscriptionBreakdown["premium"])
-	db.Model(&Subscription{}).Where("plan_type = ? AND status = ?", "enterprise", "active").Count(&analyticsData.SubscriptionBreakdown["enterprise"])
+	var premiumCount int64
+	db.Model(&Subscription{}).Where("plan_type = ? AND status = ?", "premium", "active").Count(&premiumCount)
+	analyticsData.SubscriptionBreakdown["premium"] = premiumCount
 
 	c.HTML(http.StatusOK, "admin_analytics.html", gin.H{
 		"analytics": analyticsData,

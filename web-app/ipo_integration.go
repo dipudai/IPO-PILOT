@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Multi-IPO source integration
@@ -63,7 +66,7 @@ func fetchFromMeroShare(source *IPOSource) ([]IPOData, error) {
 		"filterDateParams": []
 	}`)
 
-	req, err := http.NewRequest("POST", url, nil)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return nil, err
 	}

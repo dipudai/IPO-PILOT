@@ -71,22 +71,17 @@
             <div class="row justify-content-center mb-5">
                 <div class="col-lg-8">
                     <div class="roadmap-section">
-                        <h5 class="mb-3">💰 IPO Pilot Pricing Strategy</h5>
+                        <h5 class="mb-3">🎯 IPO Pilot - 2026 Launch Strategy</h5>
                         <div class="row text-center">
-                            <div class="col-md-4 mb-3">
-                                <strong>2025</strong>
-                                <p class="mb-0">Pre-launch pricing</p>
-                                <small>₹1,999 - ₹7,999</small>
+                            <div class="col-md-6 mb-3">
+                                <strong>2026 Launch 🎉</strong>
+                                <p class="mb-0">One Premium Plan</p>
+                                <small><strong>₹1,999 / 3 months</strong></small>
                             </div>
-                            <div class="col-md-4 mb-3 border-start border-end">
-                                <strong>2026 (NOW!) 🎉</strong>
-                                <p class="mb-0">50% LAUNCH DISCOUNT</p>
-                                <small><strong>₹999 - ₹3,999</strong></small>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <strong>2027+</strong>
-                                <p class="mb-0">Fixed Pricing</p>
-                                <small>₹999 - ₹3,999</small>
+                            <div class="col-md-6 mb-3">
+                                <strong>Why One Plan?</strong>
+                                <p class="mb-0">Everything You Need from Day One</p>
+                                <small>No compromises. Full features for everyone.</small>
                             </div>
                         </div>
                     </div>
@@ -94,10 +89,10 @@
             </div>
         </div>
 
-        <!-- Pricing Cards -->
+        <!-- Pricing Card - PREMIUM ONLY -->
         <div class="row g-4 justify-content-center mb-5">
             {{ range .plans }}
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-8 col-lg-6">
                 <div class="card pricing-card h-100 {{ if .popular }}popular{{ end }}">
                     <!-- Popular Badge -->
                     {{ if .popular }}

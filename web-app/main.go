@@ -35,7 +35,16 @@ func main() {
 	r := gin.Default()
 
 	// Load templates
-	r.LoadHTMLGlob("templates/*")
+	templates := []string{
+		"templates/index.html",
+		"templates/login.html",
+		"templates/register.html",
+		"templates/pricing.html",
+		"templates/dashboard.html",
+	}
+	for _, t := range templates {
+		r.LoadHTMLFiles(t)
+	}
 	r.Static("/static", "./static")
 
 	// Public routes

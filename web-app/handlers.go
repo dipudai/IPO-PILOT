@@ -124,125 +124,49 @@ func registerHandler(c *gin.Context) {
 
 // Pricing page - Dynamic Pricing with Future Roadmap
 func pricingHandler(c *gin.Context) {
-	// Get current year for pricing tier
-	year := time.Now().Year()
-	
-	// Pricing roadmap:
-	// 2025: Pre-launch (reference only)
-	// 2026: LAUNCH YEAR - 50% Discount Winter Special!
-	// 2027+: Fixed pricing (sustainable & stable)
-	
-	var basicPrice, premiumPrice, enterprisePrice int
-	var announcementBanner string
-	
-	switch year {
-	case 2025:
-		// Pre-launch reference
-		basicPrice = 1999
-		premiumPrice = 3999
-		enterprisePrice = 7999
-		announcementBanner = "📅 Historical pricing for reference"
-	case 2026:
-		// LAUNCH YEAR - 50% Winter Discount!
-		basicPrice = 999      // 50% off 1999
-		premiumPrice = 1999   // 50% off 3999
-		enterprisePrice = 3999 // 50% off 7999
-		announcementBanner = "🎉 2026 LAUNCH YEAR SPECIAL! 50% Discount on All Plans Limited Time!"
-	default:
-		// 2027 and beyond - Fixed pricing (no more increases)
-		basicPrice = 999
-		premiumPrice = 1999
-		enterprisePrice = 3999
-		announcementBanner = "💎 Fixed Pricing (Sustainable & Stable from Launch!)"
-	}
+	// 2026: PREMIUM-ONLY TIER - ₹1,999 for 3 months (50% discount from original ₹3,999)
+	premiumPrice := 1999
+	announcementBanner := "🎉 2026 LAUNCH YEAR SPECIAL! One Premium Plan - ₹1,999 for 3 months!"
 	
 	c.HTML(http.StatusOK, "pricing.html", gin.H{
-		"year": year,
+		"year": 2026,
 		"currency": "NPR",
 		"announcement": announcementBanner,
 		"paymentMethods": []string{"eSewa", "Khalti", "Bank Transfer"},
 		"plans": []gin.H{
-			{
-				"name":     "Basic",
-				"nameNepali": "साधारण",
-				"price":    basicPrice,
-				"priceUSD": fmt.Sprintf("$%d", basicPrice/75),
-				"duration": "3 months",
-				"durationNepali": "3 महिना",
-				"popular":  false,
-				"description": "Perfect for casual IPO investors",
-				"descriptionNepali": "साना IPO निवेशकको लागि परफेक्ट",
-				"features": []string{
-					"✓ 1 MeroShare Account",
-					"✓ Up to 50 IPO Applications",
-					"✓ Email Support",
-					"✓ 5-minute Monitoring Interval",
-				},
-				"featuresNepali": []string{
-					"✓ 1 MeroShare खाता",
-					"✓ 50 सम्म IPO आवेदन",
-					"✓ ईमेल सहायता",
-					"✓ 5 मिनेट अन्तरालमा निगरानी",
-				},
-			},
 			{
 				"name":     "Premium",
 				"nameNepali": "प्रिमियम",
 				"price":    premiumPrice,
 				"priceUSD": fmt.Sprintf("$%d", premiumPrice/75),
 				"duration": "3 months",
-				"durationNepali": "3 महिना",
+				"durationNepali": "3 महीना",
 				"popular":  true,
-				"badge":    "Most Popular",
-				"badgeNepali": "सबैले छान्ने योजना",
-				"description": "Best for active IPO investors",
-				"descriptionNepali": "अधिकांश IPO निवेशकहरूको लागि सर्वश्रेष्ठ",
+				"badge":    "Only Plan",
+				"badgeNepali": "एकमात्र योजना",
+				"description": "Everything you need for IPO automation",
+				"descriptionNepali": "IPO स्वचालन के लिए आपको सभी कुछ",
 				"features": []string{
-					"✓ 3 MeroShare Accounts",
+					"✓ Unlimited MeroShare Accounts",
 					"✓ Unlimited IPO Applications",
-					"✓ Priority Email Support",
-					"✓ 2-minute Monitoring",
-					"✓ Multi-Source IPO Tracking",
-					"✓ SMS Notifications",
+					"✓ Real-time IPO Notifications",
+					"✓ 24/7 Priority Email & Chat Support",
+					"✓ 2-minute Smart Monitoring",
+					"✓ Multi-Source IPO Tracking (All Exchanges)",
+					"✓ SMS Alerts for New IPOs",
+					"✓ Secure Credential Encryption",
+					"✓ Mobile-Friendly Dashboard",
 				},
 				"featuresNepali": []string{
-					"✓ 3 MeroShare खाता",
-					"✓ असीमित IPO आवेदन",
-					"✓ प्राथमिकता सहायता",
-					"✓ 2 मिनेट अन्तरालमा निगरानी",
-					"✓ बहु-स्रोत IPO ट्र्याकिङ",
-					"✓ SMS सूचना",
-				},
-			},
-			{
-				"name":     "Enterprise",
-				"nameNepali": "उद्यम",
-				"price":    enterprisePrice,
-				"priceUSD": fmt.Sprintf("$%d", enterprisePrice/75),
-				"duration": "12 months",
-				"durationNepali": "12 महिना",
-				"popular":  false,
-				"description": "Everything for serious investors",
-				"descriptionNepali": "गम्भीर IPO निवेशकहरूको लागि सबैकुरा",
-				"features": []string{
-					"✓ Unlimited Accounts",
-					"✓ Unlimited Applications",
-					"✓ 24/7 Priority Support",
-					"✓ Real-time Monitoring",
-					"✓ All IPO Sources",
-					"✓ SMS + Push Notifications",
-					"✓ API Access",
-					"✓ Custom Integrations",
-				},
-				"featuresNepali": []string{
-					"✓ असीमित खाता",
-					"✓ असीमित IPO आवेदन",
-					"✓ 24/7 प्राथमिकता सहायता",
-					"✓ वास्तविक समय निगरानी",
-					"✓ सबै IPO स्रोत",
-					"✓ SMS + पुश सूचना",
-					"✓ API पहुँच",
-					"✓ कस्टम एकीकरण",
+					"✓ असीमित MeroShare खाताहरू",
+					"✓ असीमित IPO आवेदनहरू",
+					"✓ रिअल-टाइम IPO सूचनाहरू",
+					"✓ 24/7 प्राथमिकता समर्थन",
+					"✓ 2-मिनेट स्मार्ट निगरानी",
+					"✓ बहु-स्रोत IPO ट्र्यैकिङ",
+					"✓ SMS अलर्ट",
+					"✓ सुरक्षित एन्क्रिप्शन",
+					"✓ मोबाइल-अनुकूल डैशबोर्ड",
 				},
 			},
 		},
@@ -256,13 +180,20 @@ func dashboardHandler(c *gin.Context) {
 	var stats DashboardStats
 	
 	// Get profile counts
-	db.Model(&Profile{}).Where("user_id = ?", userID).Count(&stats.TotalProfiles)
-	db.Model(&Profile{}).Where("user_id = ? AND is_active = ?", userID, true).Count(&stats.ActiveProfiles)
+	var totalProfiles, activeProfiles, totalApps, successApps, pendingApps int64
+	db.Model(&Profile{}).Where("user_id = ?", userID).Count(&totalProfiles)
+	db.Model(&Profile{}).Where("user_id = ? AND is_active = ?", userID, true).Count(&activeProfiles)
 	
 	// Get application counts
-	db.Model(&IPOApplication{}).Where("user_id = ?", userID).Count(&stats.TotalApplications)
-	db.Model(&IPOApplication{}).Where("user_id = ? AND status = ?", userID, "success").Count(&stats.SuccessfulApps)
-	db.Model(&IPOApplication{}).Where("user_id = ? AND status = ?", userID, "pending").Count(&stats.PendingApps)
+	db.Model(&IPOApplication{}).Where("user_id = ?", userID).Count(&totalApps)
+	db.Model(&IPOApplication{}).Where("user_id = ? AND status = ?", userID, "success").Count(&successApps)
+	db.Model(&IPOApplication{}).Where("user_id = ? AND status = ?", userID, "pending").Count(&pendingApps)
+	
+	stats.TotalProfiles = int(totalProfiles)
+	stats.ActiveProfiles = int(activeProfiles)
+	stats.TotalApplications = int(totalApps)
+	stats.SuccessfulApps = int(successApps)
+	stats.PendingApps = int(pendingApps)
 	
 	// Get subscription info
 	var subscription Subscription
