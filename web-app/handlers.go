@@ -1,0 +1,572 @@
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+// Home page
+func homeHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"title": "IPO Pilot - Automated IPO Application Platform",
+	})
+}
+
+// Login page
+func loginPageHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.html", gin.H{})
+}
+
+// Login handler
+func loginHandler(c *gin.Context) {
+	var input struct {
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	var user User
+	if err := db.Where("email = ?", input.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	if !user.IsActive {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Account is not active"})
+		return
+	}
+
+	if !checkPasswordHash(input.Password, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	// Generate JWT token
+	token, err := generateJWT(user.ID, user.IsAdmin)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+		"user": gin.H{
+			"id":      user.ID,
+			"email":   user.Email,
+			"name":    user.Name,
+			"isAdmin": user.IsAdmin,
+		},
+	})
+}
+
+// Register page
+func registerPageHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "register.html", gin.H{})
+}
+
+// Register handler
+func registerHandler(c *gin.Context) {
+	var input struct {
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=6"`
+		Name     string `json:"name" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	// Check if user exists
+	var existingUser User
+	if err := db.Where("email = ?", input.Email).First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Email already registered"})
+		return
+	}
+
+	// Hash password
+	hashedPassword, err := hashPassword(input.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process password"})
+		return
+	}
+
+	// Create user
+	user := User{
+		Email:    input.Email,
+		Password: hashedPassword,
+		Name:     input.Name,
+		IsActive: true,
+	}
+
+	if err := db.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Registration successful",
+		"user": gin.H{
+			"id":    user.ID,
+			"email": user.Email,
+			"name":  user.Name,
+		},
+	})
+}
+
+// Pricing page - Dynamic Pricing with Future Roadmap
+func pricingHandler(c *gin.Context) {
+	// Get current year for pricing tier
+	year := time.Now().Year()
+	
+	// Pricing roadmap:
+	// 2025: Pre-launch (reference only)
+	// 2026: LAUNCH YEAR - 50% Discount Winter Special!
+	// 2027+: Fixed pricing (sustainable & stable)
+	
+	var basicPrice, premiumPrice, enterprisePrice int
+	var announcementBanner string
+	
+	switch year {
+	case 2025:
+		// Pre-launch reference
+		basicPrice = 1999
+		premiumPrice = 3999
+		enterprisePrice = 7999
+		announcementBanner = "📅 Historical pricing for reference"
+	case 2026:
+		// LAUNCH YEAR - 50% Winter Discount!
+		basicPrice = 999      // 50% off 1999
+		premiumPrice = 1999   // 50% off 3999
+		enterprisePrice = 3999 // 50% off 7999
+		announcementBanner = "🎉 2026 LAUNCH YEAR SPECIAL! 50% Discount on All Plans Limited Time!"
+	default:
+		// 2027 and beyond - Fixed pricing (no more increases)
+		basicPrice = 999
+		premiumPrice = 1999
+		enterprisePrice = 3999
+		announcementBanner = "💎 Fixed Pricing (Sustainable & Stable from Launch!)"
+	}
+	
+	c.HTML(http.StatusOK, "pricing.html", gin.H{
+		"year": year,
+		"currency": "NPR",
+		"announcement": announcementBanner,
+		"paymentMethods": []string{"eSewa", "Khalti", "Bank Transfer"},
+		"plans": []gin.H{
+			{
+				"name":     "Basic",
+				"nameNepali": "साधारण",
+				"price":    basicPrice,
+				"priceUSD": fmt.Sprintf("$%d", basicPrice/75),
+				"duration": "3 months",
+				"durationNepali": "3 महिना",
+				"popular":  false,
+				"description": "Perfect for casual IPO investors",
+				"descriptionNepali": "साना IPO निवेशकको लागि परफेक्ट",
+				"features": []string{
+					"✓ 1 MeroShare Account",
+					"✓ Up to 50 IPO Applications",
+					"✓ Email Support",
+					"✓ 5-minute Monitoring Interval",
+				},
+				"featuresNepali": []string{
+					"✓ 1 MeroShare खाता",
+					"✓ 50 सम्म IPO आवेदन",
+					"✓ ईमेल सहायता",
+					"✓ 5 मिनेट अन्तरालमा निगरानी",
+				},
+			},
+			{
+				"name":     "Premium",
+				"nameNepali": "प्रिमियम",
+				"price":    premiumPrice,
+				"priceUSD": fmt.Sprintf("$%d", premiumPrice/75),
+				"duration": "3 months",
+				"durationNepali": "3 महिना",
+				"popular":  true,
+				"badge":    "Most Popular",
+				"badgeNepali": "सबैले छान्ने योजना",
+				"description": "Best for active IPO investors",
+				"descriptionNepali": "अधिकांश IPO निवेशकहरूको लागि सर्वश्रेष्ठ",
+				"features": []string{
+					"✓ 3 MeroShare Accounts",
+					"✓ Unlimited IPO Applications",
+					"✓ Priority Email Support",
+					"✓ 2-minute Monitoring",
+					"✓ Multi-Source IPO Tracking",
+					"✓ SMS Notifications",
+				},
+				"featuresNepali": []string{
+					"✓ 3 MeroShare खाता",
+					"✓ असीमित IPO आवेदन",
+					"✓ प्राथमिकता सहायता",
+					"✓ 2 मिनेट अन्तरालमा निगरानी",
+					"✓ बहु-स्रोत IPO ट्र्याकिङ",
+					"✓ SMS सूचना",
+				},
+			},
+			{
+				"name":     "Enterprise",
+				"nameNepali": "उद्यम",
+				"price":    enterprisePrice,
+				"priceUSD": fmt.Sprintf("$%d", enterprisePrice/75),
+				"duration": "12 months",
+				"durationNepali": "12 महिना",
+				"popular":  false,
+				"description": "Everything for serious investors",
+				"descriptionNepali": "गम्भीर IPO निवेशकहरूको लागि सबैकुरा",
+				"features": []string{
+					"✓ Unlimited Accounts",
+					"✓ Unlimited Applications",
+					"✓ 24/7 Priority Support",
+					"✓ Real-time Monitoring",
+					"✓ All IPO Sources",
+					"✓ SMS + Push Notifications",
+					"✓ API Access",
+					"✓ Custom Integrations",
+				},
+				"featuresNepali": []string{
+					"✓ असीमित खाता",
+					"✓ असीमित IPO आवेदन",
+					"✓ 24/7 प्राथमिकता सहायता",
+					"✓ वास्तविक समय निगरानी",
+					"✓ सबै IPO स्रोत",
+					"✓ SMS + पुश सूचना",
+					"✓ API पहुँच",
+					"✓ कस्टम एकीकरण",
+				},
+			},
+		},
+	})
+}
+
+// Dashboard handler
+func dashboardHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var stats DashboardStats
+	
+	// Get profile counts
+	db.Model(&Profile{}).Where("user_id = ?", userID).Count(&stats.TotalProfiles)
+	db.Model(&Profile{}).Where("user_id = ? AND is_active = ?", userID, true).Count(&stats.ActiveProfiles)
+	
+	// Get application counts
+	db.Model(&IPOApplication{}).Where("user_id = ?", userID).Count(&stats.TotalApplications)
+	db.Model(&IPOApplication{}).Where("user_id = ? AND status = ?", userID, "success").Count(&stats.SuccessfulApps)
+	db.Model(&IPOApplication{}).Where("user_id = ? AND status = ?", userID, "pending").Count(&stats.PendingApps)
+	
+	// Get subscription info
+	var subscription Subscription
+	if err := db.Where("user_id = ? AND status = ?", userID, "active").Order("end_date DESC").First(&subscription).Error; err == nil {
+		stats.SubscriptionStatus = "Active"
+		stats.SubscriptionExpiry = subscription.EndDate
+		stats.RemainingDays = int(time.Until(subscription.EndDate).Hours() / 24)
+	} else {
+		stats.SubscriptionStatus = "Inactive"
+	}
+
+	// Get open IPOs count (from all sources)
+	openIPOs, _ := getOpenIPOsFromAllSources()
+	stats.OpenIPOs = len(openIPOs)
+
+	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+		"stats": stats,
+	})
+}
+
+// Profiles handler
+func profilesHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var profiles []Profile
+	db.Where("user_id = ?", userID).Find(&profiles)
+
+	c.HTML(http.StatusOK, "profiles.html", gin.H{
+		"profiles": profiles,
+	})
+}
+
+// Create profile handler
+func createProfileHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var input struct {
+		Name            string `json:"name" binding:"required"`
+		DPID            string `json:"dpid" binding:"required"`
+		BOID            string `json:"boid" binding:"required"`
+		Password        string `json:"password" binding:"required"`
+		CRN             string `json:"crn" binding:"required"`
+		TransactionPIN  string `json:"transaction_pin" binding:"required"`
+		DefaultBankID   int    `json:"default_bank_id" binding:"required"`
+		DefaultKittas   int    `json:"default_kittas"`
+		AskForKittas    bool   `json:"ask_for_kittas"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	// Check subscription limits
+	var profileCount int64
+	db.Model(&Profile{}).Where("user_id = ?", userID).Count(&profileCount)
+	
+	var subscription Subscription
+	if err := db.Where("user_id = ? AND status = ?", userID, "active").First(&subscription).Error; err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "No active subscription found"})
+		return
+	}
+
+	if int(profileCount) >= subscription.MaxProfiles {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Profile limit reached. Upgrade your plan."})
+		return
+	}
+
+	// Encrypt sensitive data
+	key := generateEncryptionKey(input.Name)
+	passwordEnc, _ := encryptAES(key, input.Password)
+	crnEnc, _ := encryptAES(key, input.CRN)
+	pinEnc, _ := encryptAES(key, input.TransactionPIN)
+
+	profile := Profile{
+		UserID:            userID,
+		Name:              input.Name,
+		DPID:              input.DPID,
+		BOID:              input.BOID,
+		PasswordEnc:       passwordEnc,
+		CRNEnc:            crnEnc,
+		TransactionPINEnc: pinEnc,
+		DefaultBankID:     input.DefaultBankID,
+		DefaultKittas:     input.DefaultKittas,
+		AskForKittas:      input.AskForKittas,
+		IsActive:          true,
+	}
+
+	if err := db.Create(&profile).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create profile"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Profile created successfully",
+		"profile": profile,
+	})
+}
+
+// Update profile handler
+func updateProfileHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+	profileID, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+
+	var profile Profile
+	if err := db.Where("id = ? AND user_id = ?", profileID, userID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	var input map[string]interface{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	// Update allowed fields
+	if err := db.Model(&profile).Updates(input).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Profile updated successfully",
+		"profile": profile,
+	})
+}
+
+// Delete profile handler
+func deleteProfileHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+	profileID, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+
+	result := db.Where("id = ? AND user_id = ?", profileID, userID).Delete(&Profile{})
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Profile deleted successfully"})
+}
+
+// IPOs handler
+func iposHandler(c *gin.Context) {
+	ipos, err := getOpenIPOsFromAllSources()
+	if err != nil {
+		c.HTML(http.StatusOK, "ipos.html", gin.H{
+			"error": "Failed to fetch IPOs",
+			"ipos":  []IPOData{},
+		})
+		return
+	}
+
+	c.HTML(http.StatusOK, "ipos.html", gin.H{
+		"ipos": ipos,
+	})
+}
+
+// Apply to IPO handler
+func applyIPOHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+	ipoID := c.Param("ipo_id")
+
+	var input struct {
+		ProfileID uint `json:"profile_id" binding:"required"`
+		Kittas    int  `json:"kittas" binding:"required,min=10"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	// Verify profile ownership
+	var profile Profile
+	if err := db.Where("id = ? AND user_id = ?", input.ProfileID, userID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	// Check application limit
+	var appCount int64
+	db.Model(&IPOApplication{}).Where("user_id = ?", userID).Count(&appCount)
+	
+	var subscription Subscription
+	db.Where("user_id = ? AND status = ?", userID, "active").First(&subscription)
+	if int(appCount) >= subscription.MaxApplications {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Application limit reached"})
+		return
+	}
+
+	// Apply to IPO (simulated - integrate with actual MeroShare API)
+	application := IPOApplication{
+		UserID:         userID,
+		ProfileID:      input.ProfileID,
+		CompanyShareID: ipoID,
+		KittasApplied:  input.Kittas,
+		BankID:         profile.DefaultBankID,
+		Status:         "pending",
+		AppliedAt:      time.Now(),
+	}
+
+	if err := db.Create(&application).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create application"})
+		return
+	}
+
+	// TODO: Actual IPO application logic here
+	go processIPOApplication(&application, &profile)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Application submitted successfully",
+		"application": application,
+	})
+}
+
+// Applications handler
+func applicationsHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var applications []IPOApplication
+	db.Preload("Profile").Where("user_id = ?", userID).Order("created_at DESC").Find(&applications)
+
+	c.HTML(http.StatusOK, "applications.html", gin.H{
+		"applications": applications,
+	})
+}
+
+// Settings handler
+func settingsHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var user User
+	db.First(&user, userID)
+
+	c.HTML(http.StatusOK, "settings.html", gin.H{
+		"user": user,
+	})
+}
+
+// Update settings handler
+func updateSettingsHandler(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var input map[string]interface{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	if err := db.Model(&User{}).Where("id = ?", userID).Updates(input).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update settings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Settings updated successfully"})
+}
+
+// Payment webhook handler
+func paymentWebhookHandler(c *gin.Context) {
+	// TODO: Implement payment gateway webhook
+	// This would be called by Stripe, PayPal, Khalti, eSewa, etc.
+	
+	var payload map[string]interface{}
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload"})
+		return
+	}
+
+	// Verify payment signature
+	// Create/update subscription
+	// Send confirmation email
+
+	c.JSON(http.StatusOK, gin.H{"received": true})
+}
+
+// API docs handler
+func apiDocsHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "api_docs.html", gin.H{})
+}
+
+// Helper function to process IPO application
+func processIPOApplication(app *IPOApplication, profile *Profile) {
+	// Decrypt credentials
+	key := generateEncryptionKey(profile.Name)
+	password, _ := decryptAES(key, profile.PasswordEnc)
+	
+	// Call MeroShare API
+	success, message := applyToMeroShareIPO(profile, password, app.CompanyShareID, app.KittasApplied)
+	
+	if success {
+		app.Status = "success"
+		app.ResponseMsg = message
+	} else {
+		app.Status = "failed"
+		app.ResponseMsg = message
+	}
+	
+	db.Save(app)
+}
+
+// Placeholder for actual MeroShare API call
+func applyToMeroShareIPO(profile *Profile, password string, shareID string, kittas int) (bool, string) {
+	// TODO: Implement actual MeroShare API integration
+	fmt.Printf("Applying to IPO: %s with %d kittas for profile %s\n", shareID, kittas, profile.Name)
+	return true, "Application successful"
+}

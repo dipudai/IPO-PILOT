@@ -1,0 +1,31 @@
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Binary
+app
+ipo-pilot
+ipo-pilot.exe
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log

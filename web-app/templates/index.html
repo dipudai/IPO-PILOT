@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-rocket-takeoff"></i> IPO Pilot
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pricing">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-light text-primary ms-2" href="/register">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero bg-gradient py-5">
+        <div class="container text-center text-white py-5">
+            <h1 class="display-3 fw-bold mb-4">Automate Your IPO Applications</h1>
+            <p class="lead mb-5">Never miss an IPO opportunity. Monitor and apply to IPOs automatically across multiple sources.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="/register" class="btn btn-light btn-lg px-5">Start Free Trial</a>
+                <a href="/pricing" class="btn btn-outline-light btn-lg px-5">View Pricing</a>
+            </div>
+            <div class="mt-4">
+                <small class="text-white-50">✓ No credit card required • ✓ 7-day free trial • ✓ Cancel anytime</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Powerful Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-graph-up-arrow text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Multi-IPO Integration</h5>
+                            <p class="card-text">Track IPOs from MeroShare, IPO Result, CTS, and custom sources - all in one place.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-lightning-charge text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Automatic Application</h5>
+                            <p class="card-text">Set it and forget it. Apply to IPOs automatically based on your preferences.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Multiple Profiles</h5>
+                            <p class="card-text">Manage multiple MeroShare accounts from a single dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-shield-check text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Secure & Encrypted</h5>
+                            <p class="card-text">Bank-level AES encryption keeps your credentials safe.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-bell text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Real-time Alerts</h5>
+                            <p class="card-text">Get instant notifications when new IPOs open or close.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-bar-chart text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Analytics Dashboard</h5>
+                            <p class="card-text">Track your application history and success rates.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">1</div>
+                    <h5>Sign Up</h5>
+                    <p>Create your account in seconds</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">2</div>
+                    <h5>Add Profiles</h5>
+                    <p>Connect your MeroShare accounts</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">3</div>
+                    <h5>Set Preferences</h5>
+                    <p>Configure your IPO criteria</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">4</div>
+                    <h5>Relax</h5>
+                    <p>We'll handle the rest automatically</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-4">Ready to Get Started?</h2>
+            <p class="lead mb-4">Join thousands of investors using IPO Pilot</p>
+            <a href="/register" class="btn btn-light btn-lg px-5">Start Your Free Trial</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 IPO Pilot. All rights reserved.</p>
+            <small class="text-muted">Nepal Stock Market | Automated IPO Applications</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

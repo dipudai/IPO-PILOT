@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - IPO Pilot | Nepal's #1 IPO Automation Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background: rgba(30,30,30,0.8) !important; backdrop-filter: blur(10px); }
+        .language-toggle { position: absolute; right: 20px; top: 15px; }
+        .lang-btn { border-radius: 20px; padding: 8px 15px; font-size: 0.9rem; }
+        .pricing-card { border: none; border-radius: 15px; transition: all 0.3s ease; }
+        .pricing-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .pricing-card.popular { border: 3px solid #ffc107; }
+        .badge-popular { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #000; font-weight: bold; }
+        .price { font-size: 3rem; font-weight: bold; color: #667eea; }
+        .currency { font-size: 1.8rem; }
+        .price-period { font-size: 1rem; color: #666; }
+        .feature-item { padding: 10px 0; font-size: 0.95rem; }
+        .btn-subscribe { border-radius: 25px; padding: 12px 30px; font-weight: bold; }
+        .roadmap-section { background: rgba(255,255,255,0.1); color: white; padding: 30px; border-radius: 15px; }
+        .announcement { background: rgba(255,195,0,0.2); border-left: 4px solid #ffc107; padding: 15px; border-radius: 5px; color: white; }
+        .free-trial { background: #d4edda; padding: 12px; border-radius: 8px; margin: 15px 0; color: #155724; font-weight: 500; }
+        .money-back { background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; font-weight: 500; }
+        .price-roadmap { font-size: 0.85rem; color: #e0e0e0; margin-top: 5px; }
+        .payment-badge { background: white; padding: 15px; border-radius: 10px; margin: 10px 5px; display: inline-block; min-width: 100px; }
+        .payment-badge h5 { margin-bottom: 5px; color: #667eea; font-weight: bold; }
+        .payment-badge p { font-size: 0.8rem; color: #666; margin: 0; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/"><i class="bi bi-rocket-takeoff"></i> IPO Pilot</a>
+            <div class="language-toggle">
+                <div class="btn-group" role="group">
+                    <a href="/set-language/english" class="btn btn-sm btn-outline-light" id="en-btn">
+                        <i class="bi bi-globe"></i> English
+                    </a>
+                    <a href="/set-language/nepali" class="btn btn-sm btn-outline-light" id="np-btn">
+                        <i class="bi bi-globe"></i> नेपाली
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/login">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="text-center mb-4 text-white">
+            <h1 class="display-2 fw-bold mb-2">Simple, Transparent Pricing</h1>
+            <p class="lead mb-4">Affordable for launch year. Increase with market demand.</p>
+
+            <!-- Announcement -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8">
+                    <div class="announcement">
+                        <strong>{{ .announcement }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Roadmap -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8">
+                    <div class="roadmap-section">
+                        <h5 class="mb-3">💰 IPO Pilot Pricing Strategy</h5>
+                        <div class="row text-center">
+                            <div class="col-md-4 mb-3">
+                                <strong>2025</strong>
+                                <p class="mb-0">Pre-launch pricing</p>
+                                <small>₹1,999 - ₹7,999</small>
+                            </div>
+                            <div class="col-md-4 mb-3 border-start border-end">
+                                <strong>2026 (NOW!) 🎉</strong>
+                                <p class="mb-0">50% LAUNCH DISCOUNT</p>
+                                <small><strong>₹999 - ₹3,999</strong></small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <strong>2027+</strong>
+                                <p class="mb-0">Fixed Pricing</p>
+                                <small>₹999 - ₹3,999</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="row g-4 justify-content-center mb-5">
+            {{ range .plans }}
+            <div class="col-md-6 col-lg-4">
+                <div class="card pricing-card h-100 {{ if .popular }}popular{{ end }}">
+                    <!-- Popular Badge -->
+                    {{ if .popular }}
+                    <div class="card-header text-center py-3">
+                        <span class="badge badge-popular">
+                            <i class="bi bi-crown"></i> {{ .badge }}
+                        </span>
+                    </div>
+                    {{ end }}
+
+                    <div class="card-body p-4">
+                        <!-- Plan Name -->
+                        <h3 class="card-title text-center mb-2">{{ .name }}</h3>
+                        <p class="text-center text-muted small mb-4">{{ .description }}</p>
+
+                        <!-- Price Display -->
+                        <div class="text-center mb-3">
+                            <div class="price">
+                                <span class="currency">₹</span>{{ .price }}
+                            </div>
+                            <p class="price-period">/ {{ .duration }}</p>
+                            <p class="price-roadmap text-muted">≈ {{ .priceUSD }} USD</p>
+                        </div>
+
+                        <!-- Free Trial -->
+                        <div class="free-trial text-center">
+                            <i class="bi bi-gift"></i> 7 Days Free Trial
+                        </div>
+
+                        <!-- Features -->
+                        <ul class="list-unstyled mb-4">
+                            {{ range .features }}
+                            <li class="feature-item">
+                                <i class="bi bi-check-circle-fill text-success"></i> {{ . }}
+                            </li>
+                            {{ end }}
+                        </ul>
+
+                        <!-- CTA Button -->
+                        <button class="btn btn-{{ if .popular }}warning{{ else }}outline-primary{{ end }} w-100 btn-subscribe fw-bold mb-3"
+                                onclick="selectPlan('{{ .name }}', {{ .price }})">
+                            Get Started
+                        </button>
+
+                        <!-- Money Back Guarantee -->
+                        <p class="text-center small money-back">
+                            <i class="bi bi-shield-check"></i> 30-Day Money Back Guarantee
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+
+        <!-- Payment Methods Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <h3 class="card-title text-center mb-4">
+                            <i class="bi bi-credit-card-2-back"></i> Payment Methods
+                        </h3>
+                        <p class="text-center text-muted mb-4">We support all major payment methods in Nepal</p>
+                        <div class="text-center">
+                            <div class="payment-badge">
+                                <h5>eSewa</h5>
+                                <p>Most Popular</p>
+                            </div>
+                            <div class="payment-badge">
+                                <h5>Khalti</h5>
+                                <p>Quick & Safe</p>
+                            </div>
+                            <div class="payment-badge">
+                                <h5>Bank Transfer</h5>
+                                <p>Direct</p>
+                            </div>
+                            <div class="payment-badge">
+                                <h5>ConnectIPS</h5>
+                                <p>Coming Soon</p>
+                            </div>
+                        </div>
+                        <p class="text-center text-muted small mt-4">
+                            All payments are instant, encrypted, and secure.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <h3 class="card-title mb-4">
+                            <i class="bi bi-question-circle"></i> Frequently Asked Questions
+                        </h3>
+
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        When will prices increase?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Current 2025 pricing is our launch-year special. Prices will increase 30% in 2026 and further in 2027+. Lock in today's prices while they're available!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Can I cancel anytime?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes! Cancel from your dashboard at any time. No questions asked. Your access continues until the end of your billing period.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Is my data secure?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Absolutely! We use bank-level AES-256 encryption. Your MeroShare credentials are encrypted and never stored in plain text.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        What if I upgrade my plan?
+                                    </button>
+                                </h2>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Upgrade anytime! The difference is calculated and prorated to your next billing cycle. No surprises.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        Do you support other payment methods?
+                                    </button>
+                                </h2>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes! We support eSewa, Khalti, Bank Transfers, and more. Choose the method that works best for you.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center text-white">
+                <h2 class="mb-3 fw-bold">Start Your Free Trial Today</h2>
+                <p class="lead mb-4">7 days free. No credit card required. Lock in 2025 pricing!</p>
+                <a href="/register" class="btn btn-warning btn-lg btn-subscribe fw-bold px-5">
+                    <i class="bi bi-rocket-takeoff"></i> Get Started Now
+                </a>
+                <p class="mt-3 small text-white-50">
+                    Join 5000+ Nepali investors using IPO Pilot
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white-50 py-5 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 IPO Pilot. All rights reserved.</p>
+            <small>Nepal's #1 IPO Automation Platform</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectPlan(planName, price) {
+            localStorage.setItem('selectedPlan', JSON.stringify({
+                name: planName,
+                price: price
+            }));
+            window.location.href = '/register?plan=' + encodeURIComponent(planName);
+        }
+
+        // Highlight current language button
+        function highlightLanguage() {
+            const cookies = document.cookie.split(';');
+            let lang = 'english';
+            for (let cookie of cookies) {
+                if (cookie.includes('language=')) {
+                    lang = cookie.split('=')[1];
+                    break;
+                }
+            }
+            document.getElementById('en-btn').classList.toggle('btn-light', lang !== 'english');
+            document.getElementById('np-btn').classList.toggle('btn-light', lang !== 'nepali');
+        }
+        highlightLanguage();
+    </script>
+</body>
+</html>
