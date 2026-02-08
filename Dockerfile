@@ -13,12 +13,12 @@ RUN go mod download
 COPY web-app/ .
 
 # Build the application with CGO enabled (required for SQLite)
-RUN CGO_ENABLED=1 GOOS=linux go build -a -ldflags '-linkmode external -extldflags "-static"' -o ipo-pilot .
+RUN CGO_ENABLED=1 GOOS=linux go build -o ipo-pilot .
 
 # Use alpine for smaller image
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates sqlite-libs
+RUN apk --no-cache add ca-certificates sqlite-libs libgcc libstdc++
 
 WORKDIR /root/
 
