@@ -1,5 +1,8 @@
 FROM golang:1.21-alpine AS builder
 
+# Install build dependencies for CGO (required for SQLite)
+RUN apk add --no-cache gcc musl-dev sqlite-dev
+
 WORKDIR /app/web-app
 
 # Copy go mod files from web-app directory
@@ -9,8 +12,8 @@ RUN go mod download
 # Copy source code from web-app
 COPY web-app/ .
 
-# Build the application (pure Go, no CGO needed)
-RUN CGO_ENABLED=0 GOOS=linux go build -a -o ipo-pilot .
+# Build the application with CGO enabled (required for SQLite)
+RUN CGO_ENABLED=1 GOOS=linux go build -a -ldflags '-linkmode external -extldflags "-static"' -o ipo-pilot .
 
 # Use alpine for smaller image
 FROM alpine:latest
