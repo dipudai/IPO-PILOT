@@ -13,11 +13,27 @@ ipo-pilot.exe
 # Database
 ipo_pilot.db
 *.db
+*.sqlite
+*.sqlite3
 
-# Environment
+# Environment & Secrets
 .env
 .env.local
 .env.*.local
+.env.production
+secrets/
+*.key
+*.secret
+*.pem
+*.p12
+*.jks
+
+# API Keys & Credentials
+config/production.json
+config/secrets.json
+credentials.json
+oauth_tokens.json
+payment_keys/
 
 # IDE
 .vscode/
@@ -25,10 +41,30 @@ ipo_pilot.db
 *.swp
 *.swo
 *~
+*.iml
+.project
+.classpath
+.c9/
+*.sublime-workspace
 
 # Build artifacts
 dist/
 build/
+bin/
 
 # OS
 Thumbs.db
+.Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# System
+/.vagrant
+.vagrant/
