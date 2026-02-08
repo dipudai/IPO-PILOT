@@ -7,6 +7,9 @@
 app
 ipo-pilot
 ipo-pilot.exe
+ipo_pilot
+ipo_pilot.exe
+*.out
 
 # Environment variables
 .env
