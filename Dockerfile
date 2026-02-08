@@ -9,8 +9,8 @@ RUN go mod download
 # Copy source code from web-app
 COPY web-app/ .
 
-# Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o ipo-pilot .
+# Build the application (pure Go, no CGO needed)
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o ipo-pilot .
 
 # Use alpine for smaller image
 FROM alpine:latest
