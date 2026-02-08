@@ -86,6 +86,9 @@
                     localStorage.setItem('auth_token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     
+                    // Also set as cookie so middleware can find it
+                    document.cookie = `auth_token=${data.token}; path=/; max-age=86400`;
+                    
                     console.log('Login successful, redirecting...');
                     
                     if (data.user.isAdmin) {
