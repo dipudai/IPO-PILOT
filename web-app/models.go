@@ -24,8 +24,10 @@ type Subscription struct {
 	gorm.Model
 	UserID          uint      `gorm:"not null"`
 	User            User      `gorm:"foreignKey:UserID"`
-	PlanType        string    `gorm:"not null"` // basic, premium, enterprise
+	PlanType        string    `gorm:"not null"` // trial, premium
 	Status          string    `gorm:"not null"` // active, expired, cancelled
+	IsTrial         bool      `gorm:"default:false"` // True for 7-day free trial
+	TrialEndDate    *time.Time `gorm:""`          // For trial subscriptions
 	StartDate       time.Time `gorm:"not null"`
 	EndDate         time.Time `gorm:"not null"`
 	Price           float64   `gorm:"not null"`

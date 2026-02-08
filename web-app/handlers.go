@@ -70,6 +70,38 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
+	// Get subscription/trial info
+	var subscription Subscription
+	trialInfo := gin.H{}
+	if err := db.Where("user_id = ? AND status = ?", user.ID, "active").First(&subscription).Error; err == nil {
+		if subscription.IsTrial {
+			trialDaysRemaining := int(time.Until(*subscription.TrialEndDate).Hours() / 24)
+			if trialDaysRemaining < 0 {
+				trialDaysRemaining = 0
+			}
+			trialInfo = gin.H{
+				"status":          "active",
+				"is_trial":        true,
+				"days_remaining":  trialDaysRemaining,
+				"expires_at":      subscription.TrialEndDate.Format("2006-01-02"),
+				"subscription_id": subscription.ID,
+			}
+		} else {
+			daysRemaining := int(time.Until(subscription.EndDate).Hours() / 24)
+			if daysRemaining < 0 {
+				daysRemaining = 0
+			}
+			trialInfo = gin.H{
+				"status":          "paid",
+				"is_trial":        false,
+				"plan_type":       subscription.PlanType,
+				"days_remaining":  daysRemaining,
+				"expires_at":      subscription.EndDate.Format("2006-01-02"),
+				"subscription_id": subscription.ID,
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user": gin.H{
@@ -77,6 +109,7 @@ func loginHandler(c *gin.Context) {
 			"email":   user.Email,
 			"name":    user.Name,
 			"isAdmin": user.IsAdmin,
+			"trial":   trialInfo,
 		},
 	})
 }
@@ -126,12 +159,38 @@ func registerHandler(c *gin.Context) {
 		return
 	}
 
+	// Auto-create 7-day free trial subscription
+	trialEndDate := time.Now().AddDate(0, 0, 7) // 7 days from now
+	subscription := Subscription{
+		UserID:          user.ID,
+		PlanType:        "trial",
+		Status:          "active",
+		IsTrial:         true,
+		TrialEndDate:    &trialEndDate,
+		StartDate:       time.Now(),
+		EndDate:         trialEndDate,
+		Price:           0,
+		PaymentMethod:   "free_trial",
+		MaxProfiles:     3,          // Generous limit for trial
+		MaxApplications: 999,        // Unlimited IPO applications for trial
+	}
+
+	if err := db.Create(&subscription).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create trial subscription"})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "Registration successful",
+		"message": "Registration successful! You have 7 days free trial access.",
 		"user": gin.H{
 			"id":    user.ID,
 			"email": user.Email,
 			"name":  user.Name,
+			"trial": gin.H{
+				"status":      "active",
+				"days_remaining": 7,
+				"expires_at":   trialEndDate.Format("2006-01-02"),
+			},
 		},
 	})
 }
@@ -215,6 +274,12 @@ func dashboardHandler(c *gin.Context) {
 		stats.SubscriptionStatus = "Active"
 		stats.SubscriptionExpiry = subscription.EndDate
 		stats.RemainingDays = int(time.Until(subscription.EndDate).Hours() / 24)
+		
+		// Add trial info to response if it's a trial
+		if subscription.IsTrial {
+			c.Set("isTrial", true)
+			c.Set("trialRemainingDays", stats.RemainingDays)
+		}
 	} else {
 		stats.SubscriptionStatus = "Inactive"
 	}
