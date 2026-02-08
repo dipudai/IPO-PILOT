@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -34,18 +35,11 @@ func main() {
 	// Setup router
 	r := gin.Default()
 
-	// Load templates
-	templates := []string{
-		"templates/index.html",
-		"templates/login.html",
-		"templates/register.html",
-		"templates/pricing.html",
-		"templates/dashboard.html",
-	}
-	for _, t := range templates {
-		r.LoadHTMLFiles(t)
-	}
-	r.Static("/static", "./static")
+	// Load templates from embedded FS (reliable in Docker)
+	r.SetHTMLTemplate(template.Must(template.ParseFS(embedFS, "templates/*.html")))
+	
+	// Serve static files from embedded FS
+	r.StaticFS("/static", http.FS(embedFS))
 
 	// Public routes
 	r.GET("/", homeHandler)
