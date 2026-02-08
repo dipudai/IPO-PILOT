@@ -21,6 +21,20 @@ func loginPageHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", gin.H{})
 }
 
+// Terms of Service page
+func termsHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "terms.html", gin.H{
+		"title": "Terms of Service - IPO Pilot",
+	})
+}
+
+// Privacy Policy page
+func privacyHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "privacy.html", gin.H{
+		"title": "Privacy Policy - IPO Pilot",
+	})
+}
+
 // Login handler
 func loginHandler(c *gin.Context) {
 	var input struct {

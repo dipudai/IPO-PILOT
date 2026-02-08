@@ -48,6 +48,8 @@ func main() {
 	r.GET("/register", registerPageHandler)
 	r.POST("/register", registerHandler)
 	r.GET("/pricing", pricingHandler)
+	r.GET("/terms", termsHandler)
+	r.GET("/privacy", privacyHandler)
 
 	// Language toggle
 	r.GET("/set-language/:lang", func(c *gin.Context) {
