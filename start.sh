@@ -1,34 +1,14 @@
 #!/bin/bash
+set -e
 
-echo "🚀 IPO Pilot Web Platform - Railway Startup"
-echo "==========================================="
-echo ""
+cd web-app
 
-# Navigate to web-app directory
-cd web-app || exit 1
+echo "📦 Installing dependencies..."
+go mod download
 
-echo "📁 Current directory: $(pwd)"
-echo ""
-
-# Check if Go is installed
-if ! command -v go &> /dev/null; then
-    echo "❌ Go is not installed"
-    exit 1
-fi
-
-echo "✓ Go version: $(go version)"
-echo ""
-
-# Build the application
-echo "🔨 Building application..."
+echo "🔨 Building ITail..."
 go build -o ipo-pilot .
 
-if [ $? -eq 0 ]; then
-    echo "✓ Build successful!"
-    echo ""
-    echo "🚀 Starting IPO Pilot..."
-    ./ipo-pilot
-else
-    echo "❌ Build failed"
-    exit 1
-fi
+echo "✓ Build successful!"
+echo "🚀 Starting IPO Pilot on :8080..."
+exec ./ipo-pilot

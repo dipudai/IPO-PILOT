@@ -1,11 +1,5 @@
 [build]
-# Use Dockerfile for building (supports subdirectories better)
-builder = "DOCKERFILE"
-dockerfile = "./Dockerfile"
+builder = "dockerfile"
 
 [deploy]
-# Railway will automatically detect the startup command from Dockerfile
-healthcheckPath = "/"
-healthcheckTimeout = 100
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
+startCommand = "cd web-app && ./ipo-pilot"
