@@ -19,32 +19,32 @@
                         <h2 class="glow-text"><i class="bi bi-rocket-takeoff"></i> IPO Pilot</h2>
                         <p class="text-muted-cyber">Sign in to your account</p>
                     </div>
-                        
-                        <div id="error-message" class="alert alert-danger d-none"></div>
-                        
-                        <form id="loginForm"> cyber-label">Email Address</label>
-                                <input type="email" class="form-control cyber-input" id="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label cyber-label">Password</label>
-                                <input type="password" class="form-control cyber-input" id="password" required>
-                            </div>
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input cyber-check" id="remember">
-                                <label class="form-check-label cyber-label" for="remember">Remember me</label>
-                            </div>
-                            <button type="submit" class="btn btn-cyberember">Remember me</label>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100 mb-3">
-                                <span id="loginBtn">Sign In</span>
-                                <span id="loginSpinner" class="spinner-border spinner-border-sm d-none"></span>
-                            </button>
+                    
+                    <div id="error-message" class="alert alert-danger d-none"></div>
+                    
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label cyber-label">Email Address</label>
+                            <input type="email" class="form-control cyber-input" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label cyber-label">Password</label>
+                            <input type="password" class="form-control cyber-input" id="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input cyber-check" id="remember">
+                            <label class="form-check-label cyber-label" for="remember">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-cyber w-100 mb-3">
+                            <span id="loginBtn">Sign In</span>
+                            <span id="loginSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
+                    </form>
+                    
                     <div class="neon-line"></div>
                     
                     <div class="text-center mt-4">
-                        <p class="text-muted-cyber">Don't have an account? <a href="/register" class="cyber-link">Register</a></pclass="text-center">
-                            <p class="text-muted">Don't have an account? <a href="/register">Register</a></p>
-                        </div>
+                        <p class="text-muted-cyber">Don't have an account? <a href="/register" class="cyber-link">Register</a></p>
                     </div>
                 </div>
             </div>
@@ -65,20 +65,28 @@
             loginSpinner.classList.remove('d-none');
             
             try {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                console.log('Attempting login with email:', email);
+                
                 const response = await fetch('/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        email: document.getElementById('email').value,
-                        password: document.getElementById('password').value
+                        email: email,
+                        password: password
                     })
                 });
                 
                 const data = await response.json();
+                console.log('Response:', response.status, data);
                 
                 if (response.ok) {
                     localStorage.setItem('auth_token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    console.log('Login successful, redirecting...');
                     
                     if (data.user.isAdmin) {
                         window.location.href = '/admin';
@@ -86,10 +94,13 @@
                         window.location.href = '/dashboard';
                     }
                 } else {
-                    errorMsg.textContent = data.error || 'Login failed';
+                    const errorText = data.error || 'Login failed';
+                    console.error('Login error:', errorText);
+                    errorMsg.textContent = errorText;
                     errorMsg.classList.remove('d-none');
                 }
             } catch (error) {
+                console.error('Network error:', error);
                 errorMsg.textContent = 'Network error. Please try again.';
                 errorMsg.classList.remove('d-none');
             } finally {
