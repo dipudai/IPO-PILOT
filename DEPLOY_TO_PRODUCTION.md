@@ -500,7 +500,7 @@ Solution:
 ✅ Admin panel (manage users)
 ✅ Pricing page (ONE premium plan)
 ✅ Payment integration (eSewa + Khalti)
-✅ Language support (English + নেপালি)
+✅ Language support (English + नेपाली)
 ✅ Multi-IPO tracking
 ✅ Real-time monitoring
 ✅ 24/7 support structure
