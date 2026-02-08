@@ -1,0 +1,39 @@
+# Build files
+.git
+.gitignore
+.github
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+*.txt
+!(README*)
+
+# Old/backup files
+*_old.*
+*.bak
+*.tmp
+
+# IPO Pilot old directories
+IPO\ Pilot/
+IPO\ Pilot\ -\ Admin/
+IPO\ Pilot\ -\ customer/
+
+# Development
+.vscode
+.idea
+*.log
+
+# Node modules (if any)
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS specific
+.DS_Store
+Thumbs.db
